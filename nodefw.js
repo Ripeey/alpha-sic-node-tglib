@@ -2,10 +2,8 @@ const query = require('events')
 const rurl = require('request');
 const http = require('http');
 const site = "https://api.telegram.org/bot"
-class bot extends query
-{
-	constructor(key, type)
-	{
+class bot extends query {
+	constructor(key, type) {
 		super();
 		this.api = site + key;
 		this.update = null;
@@ -18,244 +16,189 @@ class bot extends query
 	 like $bot->sendMessage(["chat_id"=>$bot->ChatID(),"text"=>"test"]);
 	 will be bot.send('Message',{chat_id:bot.chatID(),text:'test'});
 	 Short Cut methods arent available yet unfortunately but most stuff still working
-	 i might change the looks and stuffs of Api Method Call 
-	 need some ideas.
+	 i might change the looks and stuffs of Api Method Call.
 	*/
-	send(method, params, handle_response)
-	{
+	send(method, params, handle_response) {
 		__request(`${this.api}/send${method}`, params, handle_response)
 	}
-	get(method, params)
-	{
+	get(method, params) {
 		__request(`${this.api}/get${method}`, params, handle_response)
 	}
-	delete(method, params)
-	{
+	delete(method, params) {
 		__request(`${this.api}/delete${method}`, params, handle_response)
 	}
-	forward(params)
-	{
+	forward(params) {
 		__request(`${this.api}/forwardMessage`, params, handle_response)
 	}
-	edit(method, params)
-	{
+	edit(method, params) {
 		__request(`${this.api}/edit${method}`, params, handle_response)
 	}
-	member(method, params)
-	{
+	member(method, params) {
 		__request(`${this.api}/${method}ChatMember`, params, handle_response)
 	}
-	pin(params)
-	{
+	pin(params) {
 		__request(`${this.api}/pinChatMessage`, params, handle_response)
 	}
-	unpin(params)
-	{
+	unpin(params) {
 		__request(`${this.api}/unpinChatMessage`, params, handle_response)
 	}
-	leave(params)
-	{
-		__request(`${this.api}/leaveChat`,
-		{
+	leave(params) {
+		__request(`${this.api}/leaveChat`, {
 			chat_id: params
 		}, handle_response)
 	}
-	answer(method, params)
-	{
+	answer(method, params) {
 		__request(`${this.api}/answer${method}`, params, handle_response)
 	}
-	set(method, params)
-	{
+	set(method, params) {
 		__request(`${this.api}/set${method}`, params, handle_response)
 	}
-	uploadSticker(params)
-	{
+	uploadSticker(params) {
 		__request(`${this.api}/uploadStickerFile`, params, handle_response)
 	}
-	createSticker(params)
-	{
+	createSticker(params) {
 		__request(`${this.api}/createNewStickerSet`, params, handle_response)
 	}
-	addSticker(params)
-	{
+	addSticker(params) {
 		__request(`${this.api}/addStickerToSet`, params, handle_response)
 	}
 	//All Utils
-	text()
-	{
-		try
-		{
+	text() {
+		try {
 			return this.update[this.updateType()].text;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	caption()
-	{
-		try
-		{
+	caption() {
+		try {
 			return this.update[this.updateType()].caption;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	chatID()
-	{
-		try
-		{
+	chatID() {
+		try {
 			return this.update[this.updateType()].chat.id;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	userID()
-	{
-		try
-		{
+	userID() {
+		try {
 			return this.update[this.updateType()].from.id;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	userName()
-	{
-		try
-		{
+	userName() {
+		try {
 			return this.update[this.updateType()].from.username;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	firstName()
-	{
-		try
-		{
+	firstName() {
+		try {
 			return this.update[this.updateType()].from.first_name;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	lastName()
-	{
-		try
-		{
+	lastName() {
+		try {
 			return this.update[this.updateType()].from.last_name;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	language()
-	{
-		try
-		{
+	language() {
+		try {
 			return this.update[this.updateType()].from.language_code;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	date()
-	{
-		try
-		{
+	date() {
+		try {
 			return this.update[this.updateType()].date;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	entities()
-	{
-		try
-		{
+	entities() {
+		try {
 			return this.update[this.updateType()].entities;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	messageID()
-	{
-		try
-		{
+	messageID() {
+		try {
 			return this.update[this.updateType()].message_id;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	callbackQueryID()
-	{
-		try
-		{
-			return this.update[this.updateType()].id;
+	callbackQuery() {
+		try {
+			return this.update.callback_query;
 		}
-		catch (err)
-		{
+		catch (err) {
 			return null;
 		}
 	}
-	forwardContentType()
-	{
-		try
-		{
+	inlineQuery() {
+		try {
+			return this.update.inline_query;
+		}
+		catch (err) {
+			return null;
+		}
+	}
+	forwardContentType() {
+		try {
 			return Object.keys(this.update[this.updateType()])[6];
 		}
-		catch (e)
-		{
+		catch (e) {
 			return null;
 		}
 
 	}
-	replyToMessage()
-	{
-		try
-		{
+	replyToMessage() {
+		try {
 			return this.update[this.updateType()].reply_to_message;
 		}
-		catch (e)
-		{
+		catch (e) {
 			return null;
 		}
 
 	}
-	updateType()
-	{
+	updateType() {
 		return Object.keys(this.update)[1]
 	}
-	contentType()
-	{
-		try
-		{
+	contentType() {
+		try {
 			return Object.keys(this.update[this.updateType()])[4];
 		}
-		catch (e)
-		{
+		catch (e) {
 			return null;
 		}
 	}
 	//util keyboard generators
 
-	kb(btn = [], rk = true, otk = true, sltv = true)
-	{
+	kb(btn = [], rk = true, otk = true, sltv = true) {
 		return {
 			keyboard: btn,
 			resize_keyboard: rk,
@@ -263,14 +206,11 @@ class bot extends query
 			selective: sltv
 		};
 	}
-	ikb(ar)
-	{
+	ikb(ar) {
 		var kb = [];
-		for (var line = 0; line < ar.length; line++)
-		{
+		for (var line = 0; line < ar.length; line++) {
 			kb[line] = [];
-			for (var base = 0; base < ar[line].length; base++)
-			{
+			for (var base = 0; base < ar[line].length; base++) {
 				kb[line][base] = this.btn(ar[line][base]);
 			};
 		};
@@ -278,8 +218,7 @@ class bot extends query
 			inline_keyboard: kb
 		};
 	}
-	btn(ctx)
-	{
+	btn(ctx) {
 		var data = {};
 		data['text'] = ctx[0];
 		data[ctx[2]] = ctx[1];
@@ -287,40 +226,33 @@ class bot extends query
 	}
 }
 
-function __request(meth, ctx, handle_response)
-{
+function __request(meth, ctx, handle_response) {
 	var options = {
 		uri: meth,
 		method: 'POST',
 		json: true,
 		body: ctx
 	}
-	rurl(options, function (error, response, json)
-	{
-		try
-		{
+	rurl(options, function (error, response, json) {
+		try {
 			handle_response(json);
-		}catch(e){}
+		}
+		catch (e) {}
 	});
 }
 
-function __initwebhook(self,port=3000)
-{
-	const server = http.createServer((req, res) =>
-	{
+function __initwebhook(self, port = 3000) {
+	const server = http.createServer((req, res) => {
 		let body = '';
-		const
-		{
+		const {
 			headers,
 			method,
 			url
 		} = req;
-		req.on('data', chunk =>
-		{
+		req.on('data', chunk => {
 			body += chunk.toString(); // convert Buffer to string
 		});
-		req.on('end', () =>
-		{
+		req.on('end', () => {
 			var data = JSON.parse(body);
 			self.update = data;
 			update_id = data['update_id']
@@ -335,40 +267,32 @@ function __initwebhook(self,port=3000)
 
 }
 
-function __initlongpoll(self)
-{
+function __initlongpoll(self) {
 	console.log("starting longpolling...")
 	var req_tg = `${self.api}/getupdates?offset=-1&limit=1`
-	rurl(req_tg, function (error, response, json)
-	{
+	rurl(req_tg, function (error, response, json) {
 		data = JSON.parse(json);
-		try
-		{
+		try {
 			var update_id = data["result"][0]['update_id']
 		}
-		catch (err)
-		{
+		catch (err) {
 			throw new Error("Please send any message to bot and try again!")
 		}
 		console.log(`Handling after update ${update_id}`)
 
-		function __longpoll()
-		{
+		function __longpoll() {
 			update_id += 1
 			req_tg = `${self.api}/getupdates?offset=${update_id}&timeout=300`
-			rurl(req_tg, function (error, response, json)
-			{
+			rurl(req_tg, function (error, response, json) {
 				var data = JSON.parse(json);
-				if (typeof data["result"][0] !== 'undefined')
-				{
+				if (typeof data["result"][0] !== 'undefined') {
 					self.update = data['result'][0];
 					update_id = data["result"][0]['update_id']
 					console.log("handling new update " + update_id)
 					self.emit('handle_update', data['result'][0])
 					self.emit(self.updateType(), data['result'][0][self.updateType()])
 				}
-				else
-				{
+				else {
 					console.log("no updates so re-polling")
 					update_id -= 1
 				}
