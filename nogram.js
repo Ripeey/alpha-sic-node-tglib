@@ -3,18 +3,18 @@ const rurl = require('request');
 const http = require('http');
 const site = "https://api.telegram.org/bot"
 class bot extends query {
-	constructor(key, type) {
+	constructor(key, type = 3000, data = null) {
 		super();
 		this.api = site + key;
 		this.update = null;
-		type == 'longpoll' ? __initlongpoll(this) : __initwebhook(this, type)
+		type === true ? __initlongpoll(this) : type === false? this.update = data : __initwebhook(this, type)
 	}
 	//All Api Method Calls
 	/**
  	As theres no magic method like php i have used a small trick to reduce work
  	use the first word of of every method and call it
 	 like $bot->sendMessage(["chat_id"=>$bot->ChatID(),"text"=>"test"]);
-	 will be bot.send('Message',{chat_id:bot.chatID(),text:'test'});
+	 will be bot.send('Message',{chat_id:bot.ChatID(),text:'test'});
 	 Short Cut methods arent available yet unfortunately but most stuff still working
 	 i might change the looks and stuffs of Api Method Call.
 	*/
@@ -63,95 +63,95 @@ class bot extends query {
 		__request(`${this.api}/addStickerToSet`, params, handle_response)
 	}
 	//All Utils
-	text() {
+	Text() {
 		try {
-			return this.update[this.updateType()].text;
+			return this.update[this.UpdateType()].text;
 		}
 		catch (err) {
 			return null;
 		}
 	}
-	caption() {
+	Caption() {
 		try {
-			return this.update[this.updateType()].caption;
+			return this.update[this.UpdateType()].caption;
 		}
 		catch (err) {
 			return null;
 		}
 	}
-	chatID() {
+	ChatID() {
 		try {
-			return this.update[this.updateType()].chat.id;
+			return this.update[this.UpdateType()].chat.id;
 		}
 		catch (err) {
 			return null;
 		}
 	}
-	userID() {
+	UserID() {
 		try {
-			return this.update[this.updateType()].from.id;
+			return this.update[this.UpdateType()].from.id;
 		}
 		catch (err) {
 			return null;
 		}
 	}
-	userName() {
+	UserName() {
 		try {
-			return this.update[this.updateType()].from.username;
+			return this.update[this.UpdateType()].from.username;
 		}
 		catch (err) {
 			return null;
 		}
 	}
-	firstName() {
+	FirstName() {
 		try {
-			return this.update[this.updateType()].from.first_name;
+			return this.update[this.UpdateType()].from.first_name;
 		}
 		catch (err) {
 			return null;
 		}
 	}
-	lastName() {
+	LastName() {
 		try {
-			return this.update[this.updateType()].from.last_name;
+			return this.update[this.UpdateType()].from.last_name;
 		}
 		catch (err) {
 			return null;
 		}
 	}
-	language() {
+	Language() {
 		try {
-			return this.update[this.updateType()].from.language_code;
+			return this.update[this.UpdateType()].from.language_code;
 		}
 		catch (err) {
 			return null;
 		}
 	}
-	date() {
+	Date() {
 		try {
-			return this.update[this.updateType()].date;
+			return this.update[this.UpdateType()].date;
 		}
 		catch (err) {
 			return null;
 		}
 	}
-	entities() {
+	Entities() {
 		try {
-			return this.update[this.updateType()].entities;
+			return this.update[this.UpdateType()].entities;
 		}
 		catch (err) {
 			return null;
 		}
 	}
-	messageID() {
+	MessageID() {
 		try {
-			return this.update[this.updateType()].message_id;
+			return this.update[this.UpdateType()].message_id;
 		}
 		catch (err) {
 			return null;
 		}
 	}
-	callbackQuery() {
+	CallbackQuery() {
 		try {
 			return this.update.callback_query;
 		}
@@ -159,7 +159,7 @@ class bot extends query {
 			return null;
 		}
 	}
-	inlineQuery() {
+	InlineQuery() {
 		try {
 			return this.update.inline_query;
 		}
@@ -167,30 +167,30 @@ class bot extends query {
 			return null;
 		}
 	}
-	forwardContentType() {
+	ForwardContentType() {
 		try {
-			return Object.keys(this.update[this.updateType()])[6];
+			return Object.keys(this.update[this.UpdateType()])[6];
 		}
 		catch (e) {
 			return null;
 		}
 
 	}
-	replyToMessage() {
+	ReplyToMessage() {
 		try {
-			return this.update[this.updateType()].reply_to_message;
+			return this.update[this.UpdateType()].reply_to_message;
 		}
 		catch (e) {
 			return null;
 		}
 
 	}
-	updateType() {
+	UpdateType() {
 		return Object.keys(this.update)[1]
 	}
-	contentType() {
+	ContentType() {
 		try {
-			return Object.keys(this.update[this.updateType()])[4];
+			return Object.keys(this.update[this.UpdateType()])[4];
 		}
 		catch (e) {
 			return null;
@@ -241,7 +241,7 @@ function __request(meth, ctx, handle_response) {
 	});
 }
 
-function __initwebhook(self, port = 3000) {
+function __initwebhook(self, port) {
 	const server = http.createServer((req, res) => {
 		let body = '';
 		const {
@@ -258,7 +258,7 @@ function __initwebhook(self, port = 3000) {
 			update_id = data['update_id']
 			console.log("handling new update " + update_id)
 			self.emit('handle_update', data)
-			self.emit(self.updateType(), data[self.updateType()])
+			self.emit(self.UpdateType(), data[self.UpdateType()])
 
 			res.end('ok');
 		});
@@ -290,7 +290,7 @@ function __initlongpoll(self) {
 					update_id = data["result"][0]['update_id']
 					console.log("handling new update " + update_id)
 					self.emit('handle_update', data['result'][0])
-					self.emit(self.updateType(), data['result'][0][self.updateType()])
+					self.emit(self.UpdateType(), data['result'][0][self.UpdateType()])
 				}
 				else {
 					console.log("no updates so re-polling")
