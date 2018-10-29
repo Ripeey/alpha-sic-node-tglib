@@ -197,7 +197,10 @@ class bot extends query {
 		}
 	}
 	//util keyboard generators
-
+ ForceReply(sltv=true)
+ {
+ 	 return {force_reply: true, selective: sltv}
+ }
 	kb(btn = [], rk = true, otk = true, sltv = true) {
 		return {
 			keyboard: btn,
@@ -255,7 +258,7 @@ function __initwebhook(self, port) {
 		req.on('end', () => {
 			var data = JSON.parse(body);
 			self.update = data;
-			var update_id = data['update_id']
+			update_id = data['update_id']
 			console.log("handling new update " + update_id)
 			self.emit('handle_update', data)
 			self.emit(self.UpdateType(), data[self.UpdateType()])
@@ -271,7 +274,7 @@ function __initlongpoll(self) {
 	console.log("starting longpolling...")
 	var req_tg = `${self.api}/getupdates?offset=-1&limit=1`
 	rurl(req_tg, function (error, response, json) {
-		var data = JSON.parse(json);
+		data = JSON.parse(json);
 		try {
 			var update_id = data["result"][0]['update_id']
 		}
