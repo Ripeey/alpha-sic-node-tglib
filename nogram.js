@@ -5,63 +5,24 @@ const site = "https://api.telegram.org/bot"
 class bot extends query {
 	constructor(key, type = 3000, data = null) {
 		super();
-		this.api = site + key;
+	 this.api = site + key+'/';
 		this.update = null;
 		type === true ? __initlongpoll(this) : type === false? this.update = data : __initwebhook(this, type)
+	  return new Proxy(this,{
+       	get(target,name) {
+  return function() {
+  try{
+ return target[name](...arguments)
+   }catch(e){
+   //All api method calls
+   return __request(`${target.api+name}`,...arguments)
+   }
+  }
+  
+}}
+)
 	}
-	//All Api Method Calls
-	/**
- 	As theres no magic method like php i have used a small trick to reduce work
- 	use the first word of of every method and call it
-	 like $bot->sendMessage(["chat_id"=>$bot->ChatID(),"text"=>"test"]);
-	 will be bot.send('Message',{chat_id:bot.ChatID(),text:'test'});
-	 Short Cut methods arent available yet unfortunately but most stuff still working
-	 i might change the looks and stuffs of Api Method Call.
-	*/
-	send(method, params, handle_response) {
-		__request(`${this.api}/send${method}`, params, handle_response)
-	}
-	get(method, params, handle_response) {
-		__request(`${this.api}/get${method}`, params, handle_response)
-	}
-	delete(method, params, handle_response) {
-		__request(`${this.api}/delete${method}`, params, handle_response)
-	}
-	forward(params, handle_response) {
-		__request(`${this.api}/forwardMessage`, params, handle_response)
-	}
-	edit(method, params, handle_response) {
-		__request(`${this.api}/edit${method}`, params, handle_response)
-	}
-	member(method, params, handle_response) {
-		__request(`${this.api}/${method}ChatMember`, params, handle_response)
-	}
-	pin(params, handle_response) {
-		__request(`${this.api}/pinChatMessage`, params, handle_response)
-	}
-	unpin(params, handle_response) {
-		__request(`${this.api}/unpinChatMessage`, params, handle_response)
-	}
-	leave(params, handle_response) {
-		__request(`${this.api}/leaveChat`, {
-			chat_id: params
-		}, handle_response)
-	}
-	answer(method, params, handle_response) {
-		__request(`${this.api}/answer${method}`, params, handle_response)
-	}
-	set(method, params, handle_response) {
-		__request(`${this.api}/set${method}`, params, handle_response)
-	}
-	uploadSticker(params, handle_response) {
-		__request(`${this.api}/uploadStickerFile`, params, handle_response)
-	}
-	createSticker(params, handle_response) {
-		__request(`${this.api}/createNewStickerSet`, params, handle_response)
-	}
-	addSticker(params, handle_response) {
-		__request(`${this.api}/addStickerToSet`, params, handle_response)
-	}
+
 	//All Utils
 	Text() {
 		try {
@@ -272,7 +233,7 @@ function __initwebhook(self, port) {
 
 function __initlongpoll(self) {
 	console.log("starting longpolling...")
-	var req_tg = `${self.api}/getupdates?offset=-1&limit=1`
+	var req_tg = `${self.api}getupdates?offset=-1&limit=1`
 	rurl(req_tg, function (error, response, json) {
 	var	data = JSON.parse(json);
 		try {
@@ -285,7 +246,7 @@ function __initlongpoll(self) {
 
 		function __longpoll() {
 			update_id += 1
-			req_tg = `${self.api}/getupdates?offset=${update_id}&timeout=300`
+			req_tg = `${self.api}getupdates?offset=${update_id}&timeout=300`
 			rurl(req_tg, function (error, response, json) {
 				var data = JSON.parse(json);
 				if (typeof data["result"][0] !== 'undefined') {
