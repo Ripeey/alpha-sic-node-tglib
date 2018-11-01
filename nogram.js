@@ -16,8 +16,8 @@ class bot extends query {
 					}
 					catch (e) {
 						//All api method calls
-						return __request(`${target.api+name}`, ...arguments)
-					}
+			  return arguments.length==1? __request(`${target.api+name}`,{}, ...arguments): __request(`${target.api+name}`, ...arguments)
+  		}
 				}
 
 			}
