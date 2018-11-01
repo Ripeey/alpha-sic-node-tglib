@@ -5,22 +5,23 @@ const site = "https://api.telegram.org/bot"
 class bot extends query {
 	constructor(key, type = 3000, data = null) {
 		super();
-	 this.api = site + key+'/';
+		this.api = site + key + '/';
 		this.update = null;
-		type === true ? __initlongpoll(this) : type === false? this.update = data : __initwebhook(this, type)
-	  return new Proxy(this,{
-       	get(target,name) {
-  return function() {
-  try{
- return target[name](...arguments)
-   }catch(e){
-   //All api method calls
-   return __request(`${target.api+name}`,...arguments)
-   }
-  }
-  
-}}
-)
+		type === true ? __initlongpoll(this) : type === false ? this.update = data : __initwebhook(this, type)
+		return new Proxy(this, {
+			get(target, name) {
+				return function () {
+					try {
+						return target[name](...arguments)
+					}
+					catch (e) {
+						//All api method calls
+						return __request(`${target.api+name}`, ...arguments)
+					}
+				}
+
+			}
+		})
 	}
 
 	//All Utils
@@ -158,10 +159,12 @@ class bot extends query {
 		}
 	}
 	//util keyboard generators
- ForceReply(sltv=true)
- {
- 	 return {force_reply: true, selective: sltv}
- }
+	ForceReply(sltv = true) {
+		return {
+			force_reply: true,
+			selective: sltv
+		}
+	}
 	kb(btn = [], rk = true, otk = true, sltv = true) {
 		return {
 			keyboard: btn,
@@ -219,7 +222,7 @@ function __initwebhook(self, port) {
 		req.on('end', () => {
 			var data = JSON.parse(body);
 			self.update = data;
-		var	update_id = data['update_id']
+			var update_id = data['update_id']
 			console.log("handling new update " + update_id)
 			self.emit('handle_update', data)
 			self.emit(self.UpdateType(), data[self.UpdateType()])
@@ -235,7 +238,7 @@ function __initlongpoll(self) {
 	console.log("starting longpolling...")
 	var req_tg = `${self.api}getupdates?offset=-1&limit=1`
 	rurl(req_tg, function (error, response, json) {
-	var	data = JSON.parse(json);
+		var data = JSON.parse(json);
 		try {
 			var update_id = data["result"][0]['update_id']
 		}
