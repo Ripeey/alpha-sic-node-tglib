@@ -16,7 +16,7 @@ class bot extends query {
 					}
 					catch (e) {
 						//All api method calls
-			  return arguments.length==1? __request(`${target.api+name}`,{}, ...arguments): __request(`${target.api+name}`, ...arguments)
+			  return typeof arguments[0] == 'object'? __request(`${target.api+name}`, ...arguments): __request(`${target.api+name}`,{}, ...arguments)
   		}
 				}
 
